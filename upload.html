@@ -14,7 +14,6 @@
 <body>
     <div id="content"></div>
     <script type="text/jsx">
-    var validSizes = ['120x600', '160x600', '300x250', '468x60', '728x90']
 
     var creativeStore = {
         creatives: [],
@@ -27,17 +26,24 @@
             if (creative.type == 'file') {
                 if (creative.filesize > 40 * 1024) {
                     this.setInvalid(creative, 'Creative filesize too large, max 40KB!');
+                    isValid = false;
                 }
 
                 creative.filesize = this.getHumanFileSize(creative['filesize']);
             }
 
-            if (!this.isValidSize(creative.size)) {
-                this.setInvalid(creative, 'Incorrect creative dimensions!');
-            }
-
+            this.validate(creative);
 
             this.creatives.push(creative);
+        },
+
+        validate: function (creative) {
+            if (!this.isValidSize(creative.size)) {
+                this.setInvalid(creative, 'Incorrect creative dimensions!');
+            } else {
+                delete creative.state;
+                delete creative.reason;
+            }
         },
 
         update: function (id, creative) {
@@ -45,6 +51,8 @@
             var source = this.creatives[index];
 
             _.extend(source, creative);
+
+            this.validate(source);
         },
 
         remove: function (id) {
@@ -65,8 +73,9 @@
 
         getState: function () {
             var url = this.defaultClickUrl;
+
             var creatives = _.map(this.creatives, function (c) {
-                if (c.kind === 'file' && (!c.clickUrl || c.clickUrl === '')) {
+                if (c.type == 'file' && (!c.clickUrl || c.clickUrl == '')) {
                     var newc = _.clone(c);
                     newc.clickUrl = url;
 
@@ -83,7 +92,6 @@
             creative.state  = 'invalid';
             creative.reason = reason;
         },
-
 
         getHumanFileSize: function (fileSizeInBytes) {
             var i = -1;
@@ -102,6 +110,37 @@
 
     };
 
+    /* Creatives */
+
+    // Either an iframe or javascript creative
+    var PopCreative = React.createClass({
+        onChangeUrl: function (e) {
+            this.props.updateCreative(this.props.data.id, { url: e.target.value });
+        },
+
+        render: function() {
+            return (
+                <tr>
+                    <td>
+                        <img src="/img/popup.png"></img>
+                    </td>
+                    <td>
+                        <input className="form-control" type="text" defaultValue="http://" onChange={this.onChangeUrl} />
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <button className="remove btn btn-danger" title="Remove this banner" onClick={this.props.removeCreative.bind(null, this.props.data.id)}>
+                            <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                </tr>
+            );
+        }
+    });
+
+
     var ContentCreative = React.createClass({
         onChangeContent: function (e) {
             this.props.updateCreative(this.props.data.id, { content: e.target.value });
@@ -115,11 +154,13 @@
             this.props.updateCreative(this.props.data.id, { kind: e.target.value.toLowerCase() });
         },
 
-        render: function() {
-            // TODO: Get size through property
-            goodSizes = validSizes.map(function (size) {
+        getAllowedSizes: function () {
+            return _.map(this.props.allowedSizes, function (size) {
                 return <option key={size} value={size}>{size}</option>;
             });
+        },
+
+        render: function() {
             return (
                 <tr>
                     <td>
@@ -137,7 +178,7 @@
                     <td>
                         <select name="dimensions" onChange={this.onChangeSize}>
                             <option>Choose one</option>
-                            {goodSizes}
+                            {this.getAllowedSizes()}
                         </select>
                     </td>
                     <td>&nbsp;</td>
@@ -166,11 +207,13 @@
             this.props.updateCreative(this.props.data.id, { kind: e.target.value });
         },
 
-        render: function() {
-            // TODO: Get size through property
-            goodSizes = validSizes.map(function (size) {
+        getAllowedSizes: function () {
+            return _.map(this.props.allowedSizes, function (size) {
                 return <option key={size} value={size}>{size}</option>;
             });
+        },
+
+        render: function() {
             return (
                 <tr>
                     <td>
@@ -188,7 +231,7 @@
                     <td>
                         <select name="dimensions" onChange={this.onChangeSize}>
                             <option>Choose one</option>
-                            {goodSizes}
+                            {this.getAllowedSizes()}
                         </select>
                     </td>
                     <td>&nbsp;</td>
@@ -213,7 +256,7 @@
                 var urlInput = this.props.data.reason;
             }
             else {
-                var urlInput = <input ref="clickUrl" className="clickurl form-control default" type="text" defaultValue="http://" name="clickurl" onChange={this.onChangeClickUrl}/>;
+                var urlInput = <input ref="clickUrl" className="clickurl form-control default" type="text" defaultValue="http://" value={this.props.data.clickUrl} name="clickurl" onChange={this.onChangeClickUrl}/>;
             }
 
             return (
@@ -247,14 +290,18 @@
                 return false;
             }
 
+            allowedSizes = this.props.allowedSizes;
+
             var creatives = this.props.creatives.map(function (creative) {
                 switch (creative.type) {
                     case 'file':
                             return <ImageCreative key={creative.id} data={creative} removeCreative={removeCreative} updateCreative={updateCreative}/>;
                     case 'url':
-                            return <UrlCreative key={creative.id} data={creative} removeCreative={removeCreative} updateCreative={updateCreative}/>;
+                            return <UrlCreative key={creative.id} data={creative} removeCreative={removeCreative} updateCreative={updateCreative} allowedSizes={allowedSizes} />;
                     case 'content':
-                            return <ContentCreative key={creative.id} data={creative} removeCreative={removeCreative} updateCreative={updateCreative}/>;
+                            return <ContentCreative key={creative.id} data={creative} removeCreative={removeCreative} updateCreative={updateCreative} allowedSizes={allowedSizes} />;
+                    case 'pop':
+                            return <PopCreative key={creative.id} data={creative} removeCreative={removeCreative} updateCreative={updateCreative} />;
                     default:
                         return <tr><td>Unknown Creative Type</td></tr>;
                 }
@@ -289,8 +336,6 @@
 
     var UploadButtons = React.createClass({
         onUrlCreative: function (e) {
-            console.log('onUrlCreative');
-
             this.props.addCreative({
                 type: 'url',
                 kind: 'iframe'
@@ -298,12 +343,18 @@
         },
 
         onContentCreative: function (e) {
-            console.log('onContentCreative');
-
             this.props.addCreative({
                 type: 'content',
                 kind: 'html'
             });
+        },
+
+        onPopCreative: function (e) {
+            this.props.addCreative({
+                type: 'pop',
+                size: '800x600'
+            });
+
         },
 
         render: function () {
@@ -314,11 +365,15 @@
                         <input id="fileinput" type="file" multiple="multiple" accept="image/*,application/x-shockwave-flash" onChange={this.props.handleUpload} />
                     </a>
                     <a className="btn btn-primary btn-sm" href="javascript:void(0);" onClick={this.onUrlCreative}>
-                    <span className="glyphicon glyphicon-plus" aria-hidden="true" ></span> Add a JS or iframe URL</a>
+                        <span className="glyphicon glyphicon-plus" aria-hidden="true" ></span> Add a JS or iframe URL
+                    </a>
                     <a className="btn btn-primary btn-sm" href="javascript:void(0);" onClick={this.onContentCreative}>
-                    <span className="glyphicon glyphicon-plus" aria-hidden="true"></span> Add a JS or HTML script</a>
-                    <a className="btn btn-primary btn-sm" href="javascript:void(0);">
-                    <span className="glyphicon glyphicon-plus" aria-hidden="true"></span> Add a popup/popunder URL</a>or drag them to this window
+                        <span className="glyphicon glyphicon-plus" aria-hidden="true"></span> Add a JS or HTML script
+                    </a>
+                    <a className="btn btn-primary btn-sm" href="javascript:void(0);" onClick={this.onPopCreative}>
+                        <span className="glyphicon glyphicon-plus" aria-hidden="true"></span> Add a popup/popunder URL
+                    </a>
+                    or drag them to this window
                 </p>
             );
         }
@@ -330,8 +385,6 @@
         },
 
         handleUpload: function (e) {
-            console.log('HandleUpload', e.target.files);
-
             for (i = 0; i < e.target.files.length; i++) {
                 this.addFileCreative(e.target.files[i]);
             }
@@ -394,14 +447,16 @@
                 <div>
                     <DefaultUrl updateDefaultClickUrl={this.updateDefaultClickUrl} />
                     <UploadButtons handleUpload={this.handleUpload} addCreative={this.addCreative}/>
-                    <CreativeList creatives={this.state.creatives} removeCreative={this.removeCreative} updateCreative={this.updateCreative}/>
+                    <CreativeList creatives={this.state.creatives} removeCreative={this.removeCreative} updateCreative={this.updateCreative} allowedSizes={this.props.allowedSizes} />
                 </div>
             );
         }
     });
 
+    var validSizes = ['120x600', '160x600', '300x250', '468x60', '728x90'];
+
     React.render(
-        <CreativeControl />,
+        <CreativeControl allowedSizes={validSizes}/>,
         document.getElementById('content')
     );
     </script>
