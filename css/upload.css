@@ -1,0 +1,320 @@
+#dragoverlay {
+display: none;
+position: fixed;
+z-index: 12;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+overflow: hidden;
+color: #fff;
+background-color: #888;
+text-align: center;
+font-size: 140%;
+text-shadow: 0 1px 1px rgba(0, 0, 0, .50);
+-webkit-transition: opacity 400ms;
+-moz-transition: opacity 400ms;
+-o-transition: opacity 400ms;
+transition: opacity 400ms;
+opacity: 0;
+filter: alpha(opacity=0);
+-webkit-backface-visibility: hidden; /* Fixes text getting weird in Safari when reaching 100% opacity */
+}
+
+#dragoverlay.active {
+display: block;
+}
+
+#dragoverlay.visible {
+opacity: .75;
+filter: alpha(opacity=75);
+}
+
+#dragoverlay h1 {
+font-size: 225%;
+margin-top: 25%;
+}
+
+#da-images,
+#da-flash,
+#da-archives {
+display: inline-block;
+height: 28px;
+background-image: url(/img/s-upload.png);
+background-repeat: no-repeat;
+vertical-align: -7px;
+}
+
+#da-images {
+width: 28px;
+background-position: 0 -500px;
+}
+
+#da-flash {
+width: 26px;
+background-position: -28px -500px;
+}
+
+#da-archives {
+width: 26px;
+background-position: -54px -500px;
+}
+
+#section-clickurl.ignored {
+display: none;
+}
+
+form.transport {
+display: none;
+}
+
+#uploaders .btn {
+padding: 6px 12px;
+margin-right: .5em;
+vertical-align: middle;
+position: relative; /* TODO: only for fileButton? */
+overflow: hidden; /* Required because input element overflows. No problem for IE6 since the .button elements are <a>s */
+}
+
+#uploaders .button.focus {
+outline: thin dotted #2c2c2c;
+outline: 5px auto -webkit-focus-ring-color;
+outline-offset: -2px;
+}
+
+/*
+#fileinput {
+width: 0;
+height: 0;
+visibility: hidden;  Opera (and possibly more browsers) ignore the click even on the file input if it has display: none
+}*/
+
+#fileinput {
+/*vertical-align: top; Somehow required for IE6/7, otherwise button text becomes invisible */
+position: absolute;
+top: 0;
+right: 0;
+font-size: 118px;
+padding: 0;
+margin: -1px; /* To make up for 1px border of the parent element */
+direction: ltr;
+cursor: pointer;
+opacity: 0;
+filter: alpha(opacity=0);
+/* IE 6/7 fixes */
+*font-size: 100%; /* Otherwise IE7 makes the invisible space between the element font-size: 118px, causing a too high .button element */
+*height: 3em; /* Could be omitted, just to be sure that the input element is high enough */
+*zoom: 2; /* To ensure that the "Browse..." button is wide enough to cover the .button element. Important: use the * css hack because zoom: 2 in combination with the large font-size would cause problems in IE8 */
+}
+
+#creatives {
+margin-bottom: 1.12em;
+background-color: #fff;
+}
+
+#creatives tr:nth-child(even) > td {
+background-color: #f7f7f7;
+}
+
+#creatives tr.declined td { /* More CSS precision than the :nth-child(...) selector */
+background-color: #f9dddd;
+}
+
+#creatives td.preview {
+text-align: center;
+}
+
+#creatives img {
+max-width: 140px;
+max-height: 140px;
+vertical-align: bottom; /* To avoid ~5px spacing below image in Chrome */
+}
+
+#creatives .uploading img,
+#creatives .uploading .placeholder {
+opacity: .4;
+filter: alpha(opacity=40);
+}
+
+#creatives .placeholder.archive img {
+position: absolute;
+left: 53px;
+top: 24px;
+}
+
+#creatives .placeholder {
+position: relative; /* Because it can contain a progress bar that must be vertically centered */
+display: inline-block; /* Not block because it should be centered */
+width: 140px;
+height: 100px;
+background-image: url(/img/s-upload.png);
+background-repeat: no-repeat;
+}
+
+#creatives .placeholder.flash {
+background-position: 0 0;
+}
+
+#creatives .placeholder.archive {
+background-position: 0 -100px;
+}
+
+#creatives .placeholder.pop {
+background-position: 0 -200px;
+}
+
+#creatives .placeholder.iframe {
+background-position: 0 -300px;
+}
+
+#creatives .placeholder.javascript {
+background-position: 0 -400px;
+}
+
+#creatives .progressbar {
+display: none;
+text-align: left;
+width: 80%;
+max-width: 112px;
+height: 16px;
+padding-right: 2px; /* To make up for the borders of the inner element (such that 100% width of the child does not exceed the parent's width) */
+margin-left: -1px; /* To make up for the padding */
+background-color: #abb2bd;
+background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#a0a9b4), to(#b4bac5));
+background-image: -webkit-linear-gradient(top, #a0a9b4, #b4bac5);
+background-image: -moz-linear-gradient(top, #a0a9b4, #b4bac5);
+background-image: -o-linear-gradient(top, #a0a9b4, #b4bac5);
+background-image: linear-gradient(to bottom, #a0a9b4, #b4bac5);
+-webkit-border-radius: 8px;
+-moz-border-radius: 8px;
+border-radius: 8px;
+-webkit-box-shadow: inset 0 1px 3px #686e76;
+-moz-box-shadow: inset 0 1px 3px #686e76;
+box-shadow: inset 0 1px 3px #686e76;
+}
+
+#creatives .uploading .progressbar {
+display: inline-block;
+}
+
+#creatives .pwrap {
+display: inline-block;
+position: relative;
+min-width: 28px; /* Based on a 120x600 size scaled down to 28x140, just should for a very short period when the image is inserted but has not been rendered to expand the pwrap element jet. TODO?: better solution */
+}
+
+#creatives .pwrap .progressbar,
+#creatives .placeholder .progressbar {
+position: absolute;
+left: 10%;
+top: 50%;
+margin-top: -9px;
+}
+
+#creatives .progressbar span {
+display: inline-block;
+min-width: 14px;
+height: 14px;
+background-color: #75b8eb;
+border: 1px solid #2e5c8b;
+background-image: -webkit-gradient(linear, left top, right bottom,
+    color-stop(.25, rgba(255, 255, 255, .15)), color-stop(.25, transparent),
+    color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .15)),
+    color-stop(.75, rgba(255, 255, 255, .15)), color-stop(.75, transparent),
+    to(transparent));
+background-image: -webkit-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                    transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                    transparent 75%, transparent);
+background-image: -moz-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                    transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                    transparent 75%, transparent);
+background-image: -o-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                    transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                    transparent 75%, transparent);
+background-image: linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                    transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                    transparent 75%, transparent);
+-webkit-border-radius: 8px;
+-moz-border-radius: 8px;
+border-radius: 8px;
+-webkit-background-size: 30px 30px;
+-moz-background-size: 30px 30px;
+-o-background-size: 30px 30px;
+background-size: 30px 30px;
+-webkit-box-shadow: inset 0 1px 0 #7eb9f5, inset 0 -2px 2px rgba(73, 160, 227, .5);
+-moz-box-shadow: inset 0 1px 0 #7eb9f5, inset 0 -2px 2px rgba(73, 160, 227, .5);
+box-shadow: inset 0 1px 0 #7eb9f5, inset 0 -2px 2px rgba(73, 160, 227, .5);
+-webkit-transition: width .4s;
+-moz-transition: width .4s;
+-o-transition: width .4s;
+transition: width .4s;
+-webkit-animation: progress 3s linear infinite;
+-moz-animation: progress 3s linear infinite;
+-o-animation: progress 3s linear infinite;
+animation: progress 3s linear infinite;
+}
+
+#creatives .filename {
+word-wrap: break-word; /* Doesn't help in Chrome, but maybe in IE? Supported by older browsers */
+word-break: break-word;
+}
+
+#creatives .clicktrackinginfo {
+display: block;
+font-size: 85%;
+margin-top: .3em;
+}
+
+#creatives code {
+font-size: 110%;
+padding: 0;
+background-color: transparent;
+}
+
+#creatives .clickurl.default {
+color: #888;
+background: transparent;
+border-color: #ddd;
+-o-text-overflow: ellipsis;
+text-overflow: ellipsis;
+-webkit-box-shadow: none;
+-moz-box-shadow: none;
+box-shadow: none;
+}
+
+#creatives .remove {
+padding: 8px 8px 2px;
+}
+
+@media (-webkit-min-device-pixel-ratio: 1.25), (-o-min-device-pixel-ratio: 5/4), (min-resolution: 120dpi), (min-resolution: 1.5dppx) {
+  #da-images,
+  #da-flash,
+  #da-archives,
+  #creatives .placeholder {
+  background-image: url(/images/s-uploadx2.png?v2);
+  -webkit-background-size: 140px 528px;
+  -moz-background-size: 140px 528px;
+  -o-background-size: 140px 528px;
+  background-size: 140px 528px;
+  }
+}
+
+@-webkit-keyframes progress {
+  from { background-position: 0 0; }
+  to { background-position: 60px 0; }
+}
+
+@-moz-keyframes progress {
+  from { background-position: 0 0; }
+  to { background-position: 60px 0; }
+}
+
+@-o-keyframes progress {
+  from { background-position: 0 0; }
+  to { background-position: 60px 0; }
+}
+
+@keyframes progress {
+  from { background-position: 0 0; }
+  to { background-position: 60px 0; }
+}
