@@ -10,7 +10,7 @@
         },
 
         notifyListeners: function () {
-            _.each(this.listeners, function (listener) { listener() });
+            _.each(this.listeners, function (listener) { listener(); });
         },
 
         setValidSizes: function (sizes) {
@@ -21,10 +21,24 @@
             var reader = new FileReader();
             var image = new Image();
 
+            // TODO: If filesize is too large add with placeholder and
+            // do not load the entire image!
+            if (file.size > 120 * 1024) {
+                creativeStore.add({
+                    type: 'file',
+                    clickUrl: '',
+                    filename: file.name,
+                    filesize: file.size,
+                    size: 'Unknown',
+                    url: '/img/placeholder.png'
+                });
+
+                return;
+            }
+
             reader.onload = function(upload) {
                 image.src    = upload.target.result;
                 image.onload = function () {
-
                     creativeStore.add({
                         type: 'file',
                         clickUrl: '',
@@ -33,7 +47,7 @@
                         size: this.width + 'x' + this.height,
                         url: upload.target.result
                     });
-                }
+                };
             }.bind(this);
 
             reader.readAsDataURL(file);
@@ -42,16 +56,16 @@
         add: function (creative) {
             creative.id = this.key++;
 
+            this.validate(creative);
+
             if (creative.type == 'file') {
                 if (creative.filesize > 40 * 1024) {
                     this.setInvalid(creative, 'Creative filesize too large, max 40KB!');
                     isValid = false;
                 }
 
-                creative.filesize = this.getHumanFileSize(creative['filesize']);
+                creative.filesize = this.getHumanFileSize(creative.filesize);
             }
-
-            this.validate(creative);
 
             this.creatives.push(creative);
 
@@ -102,7 +116,7 @@
             var url = this.defaultClickUrl;
 
             var creatives = _.map(this.creatives, function (c) {
-                if (c.type == 'file' && (!c.clickUrl || c.clickUrl == '')) {
+                if (c.type == 'file' && (!c.clickUrl || c.clickUrl === '')) {
                     var newc = _.clone(c);
                     newc.clickUrl = url;
 
@@ -113,6 +127,14 @@
             });
 
             return { creatives: creatives };
+        },
+
+        getValidCreatives: function () {
+            var creatives = this.getState();
+
+            return _.filter(creatives, function (creative) {
+                return creative.state != 'invalid';
+            });
         },
 
         setInvalid: function (creative, reason) {
@@ -485,5 +507,5 @@
                 return creativeStore;
             }
         }
-    }
+    };
 })();

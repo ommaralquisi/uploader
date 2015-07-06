@@ -93,6 +93,6 @@ $(function () {
     }
 
     function processFile(file) {
-
+        uploader.store().addFile(file);
     }
 });
