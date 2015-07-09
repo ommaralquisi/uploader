@@ -1,7 +1,5 @@
 <?php
 
-ini_set('html_errors', 0);
-var_dump($_FILES);
 $files = [];
 
 if (!isset($_FILES['file']))
@@ -15,7 +13,9 @@ function makeFile($name, $filename, $size) {
         $file = ['name' => $name];
 
         if ($size > 40 * 1024) {
-            $file['error'] = 'Size too large';
+            $file['state'] = 'invalid';
+            $file['reason'] = 'Size too large';
+            $file['filesize'] = $size;
         } else {
             if (($dimensions = getimagesize($filename, $info)) === false) {
                 $file['state'] = 'invalid';
@@ -31,5 +31,5 @@ function makeFile($name, $filename, $size) {
         return $file;
 }
 
-header('Content-type: text/html; charset=utf-8'); // Required since json_encode otherwise changes the content-type to application/json
+header('Content-type: text/html; charset=utf-8');
 die('<!DOCTYPE html><html lang=en><head><meta charset=utf-8><script type="text/javascript">window.response = \''.json_encode(['files' => $files]).'\';</script></head><body></body></html>');

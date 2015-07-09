@@ -103,19 +103,21 @@
                                     type: 'file',
                                     clickUrl: '',
                                     filename: file.name,
-                                    filesize: file.size,
+                                    filesize: file.filesize,
+                                    size: 'Unknown',
                                     url: self.getPlaceholder()
                                 };
-                                
                                 self.setInvalid(errFile);
+
+                                self.add(errFile);
                             }
                             else {
                                 self.add({
                                     type: 'file',
                                     clickUrl: '',
                                     filename: file.name,
-                                    filesize: file.size,
-                                    size: this.width + 'x' + this.height,
+                                    filesize: file.filesize,
+                                    size: file.size,
                                     url: file.data
                                 });
                             }

@@ -108,7 +108,7 @@
                     <td>
                         <img src={'/img/url-' + this.props.data.kind.toLowerCase() + '.png'}></img>
                         <select style={{verticalAlign: 'top'}} name="kind" onChange={this.onChangeKind}>
-                            <option>iFrame</option>
+                            <option value="html">iFrame</option>
                             <option>Javascript</option>
                         </select>
                     </td>
@@ -226,7 +226,7 @@
         onUrlCreative: function (e) {
             this.props.addCreative({
                 type: 'url',
-                kind: 'iframe'
+                kind: 'html'
             });
         },
 
