@@ -40,7 +40,7 @@ margin-top: 25%;
 #da-archives {
 display: inline-block;
 height: 28px;
-background-image: url(/img/s-upload.png);
+background-image: url(/img/creatives/s-upload.png);
 background-repeat: no-repeat;
 vertical-align: -7px;
 }
@@ -147,7 +147,7 @@ position: relative; /* Because it can contain a progress bar that must be vertic
 display: inline-block; /* Not block because it should be centered */
 width: 140px;
 height: 100px;
-background-image: url(/img/s-upload.png);
+background-image: url(/img/creatives/s-upload.png);
 background-repeat: no-repeat;
 }
 
@@ -291,7 +291,7 @@ padding: 8px 8px 2px;
   #da-flash,
   #da-archives,
   #creatives .placeholder {
-  background-image: url(/images/s-uploadx2.png?v2);
+  background-image: url(/img/creatives/s-upload.png); /* TODO: add retina */
   -webkit-background-size: 140px 528px;
   -moz-background-size: 140px 528px;
   -o-background-size: 140px 528px;

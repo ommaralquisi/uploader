@@ -18,8 +18,13 @@
                 this.validSizes = sizes;
             },
 
+            empty: function () {
+                this.creatives = [];
+                this.notifyListeners();
+            },
+
             handleUpload: function (input) {
-                if (/*TODO: REMOVE*/ false && !!window.FileReader && !!window.FormData) {
+                if (!!window.FileReader && !!window.FormData) {
                     for (i = 0; i < input.files.length; i++) {
                         this.addFile(input.files[i]);
                     }
@@ -76,7 +81,7 @@
 
                 var form = $('<form></form>', {
                     'class': 'transport',
-                    //action: 'http://www.atomx.com:5241/upload',
+                    // TODO: Use the actual local base64 encoder
                     action: '/base64.php',
                     method: 'POST',
                     enctype: 'multipart/form-data',

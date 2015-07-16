@@ -11,7 +11,7 @@
             return (
                 <tr>
                     <td>
-                        <img src="/img/popup.png"></img>
+                        <img src="/img/creatives/popup.png"></img>
                     </td>
                     <td>
                         <input className="form-control" type="text" defaultValue="http://" onChange={this.onChangeUrl} />
@@ -53,7 +53,7 @@
             return (
                 <tr>
                     <td>
-                        <img src={'/img/content-' + this.props.data.kind + '.png'}></img>
+                        <img src={'/img/creatives/content-' + this.props.data.kind + '.png'}></img>
                         <select style={{verticalAlign: 'top'}} name="kind" onChange={this.onChangeKind}>
                             <option>HTML</option>
                             <option>Javascript</option>
@@ -106,7 +106,7 @@
             return (
                 <tr>
                     <td>
-                        <img src={'/img/url-' + this.props.data.kind.toLowerCase() + '.png'}></img>
+                        <img src={'/img/creatives/url-' + this.props.data.kind.toLowerCase() + '.png'}></img>
                         <select style={{verticalAlign: 'top'}} name="kind" onChange={this.onChangeKind}>
                             <option value="html">iFrame</option>
                             <option>Javascript</option>
