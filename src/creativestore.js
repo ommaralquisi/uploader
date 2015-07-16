@@ -18,6 +18,12 @@
                 this.validSizes = sizes;
             },
 
+            setDefaultClickUrl: function (url) {
+                this.defaultClickUrl = url;
+
+                this.notifyListeners();
+            },
+
             empty: function () {
                 this.creatives = [];
                 this.notifyListeners();
@@ -155,15 +161,6 @@
                 this.notifyListeners();
             },
 
-            validate: function (creative) {
-                if (_.indexOf(['url', 'content', 'file'], creative.type) != -1 && !this.isValidSize(creative.size)) {
-                    this.setInvalid(creative, 'Incorrect creative dimensions!');
-                } else {
-                    delete creative.state;
-                    delete creative.reason;
-                }
-            },
-
             update: function (id, creative) {
                 var index = this.find(id);
                 var source = this.creatives[index];
@@ -185,14 +182,29 @@
                 this.notifyListeners();
             },
 
-            setDefaultClickUrl: function (url) {
-                this.defaultClickUrl = url;
-
-                this.notifyListeners();
-            },
-
             find: function (id) {
                 return _.findIndex(this.creatives, function (c) { return c.id === id; });
+            },
+
+            validate: function (creative) {
+                if (_.indexOf(['url', 'content', 'file'], creative.type) != -1 && !this.isValidSize(creative.size)) {
+                    this.setInvalid(creative, 'Incorrect creative dimensions!');
+                } else {
+                    delete creative.state;
+                    delete creative.reason;
+                }
+            },
+
+            isValidSize: function (size) {
+                return _.indexOf(this.validSizes, size) !== -1;
+            },
+
+            getValidCreatives: function () {
+                var creatives = this.getState().creatives;
+
+                return _.filter(creatives, function (creative) {
+                    return creative.state != 'invalid';
+                });
             },
 
             getState: function () {
@@ -212,14 +224,6 @@
                 return { creatives: creatives };
             },
 
-            getValidCreatives: function () {
-                var creatives = this.getState();
-
-                return _.filter(creatives, function (creative) {
-                    return creative.state != 'invalid';
-                });
-            },
-
             setInvalid: function (creative, reason) {
                 creative.state  = 'invalid';
                 creative.reason = reason;
@@ -236,12 +240,8 @@
                 return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
             },
 
-            isValidSize: function (size) {
-                return _.indexOf(this.validSizes, size) !== -1;
-            },
-
             getPlaceholder: function () {
-                return '/img/placeholder.png';
+                return '/img/creatives/placeholder.png';
             }
 
         };
