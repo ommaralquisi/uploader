@@ -5,6 +5,7 @@
             creatives: [],
             defaultClickUrl: 'http://',
             key: 0,
+            showingInvalid: false,
 
             addChangeListener: function (listener) {
                 this.listeners.push(listener);
@@ -19,7 +20,15 @@
             },
 
             setDefaultClickUrl: function (url) {
+                var self = this;
                 this.defaultClickUrl = url;
+
+                // Revalidate all creatives that use the default clickUrl
+                _.each(this.creatives ,function (creative) {
+                    if (!creative.clickUrl || creative.clickUrl === '') {
+                        self.validate(creative);
+                    }
+                });
 
                 this.notifyListeners();
             },
@@ -51,7 +60,7 @@
                         clickUrl: '',
                         filename: file.name,
                         filesize: file.size,
-                        size: file.size,
+                        size: 'Unknown',
                         url: self.getPlaceholder()
                     });
 
@@ -148,9 +157,12 @@
                 this.validate(creative);
 
                 if (creative.type == 'file') {
+                    if (!this.isValidSize(creative.size)) {
+                        creative.permanentlyInvalid = true;
+                    }
+
                     if (creative.filesize > 40 * 1024) {
                         this.setInvalid(creative, 'Creative filesize too large, max 40KB!');
-                        isValid = false;
                     }
 
                     creative.filesize = this.getHumanFileSize(creative.filesize);
@@ -187,16 +199,50 @@
             },
 
             validate: function (creative) {
-                if (_.indexOf(['url', 'content', 'file'], creative.type) != -1 && !this.isValidSize(creative.size)) {
+                if (creative.type !== 'pop' && !this.isValidSize(creative.size)) {
                     this.setInvalid(creative, 'Incorrect creative dimensions!');
-                } else {
-                    delete creative.state;
-                    delete creative.reason;
+                    return;
                 }
+
+                if (creative.type !== 'file' && !this.isValidUrl(creative.url)) {
+                    this.setInvalid(creative, 'Incorrect URL set!');
+                    return;
+                }
+
+                if (creative.type == 'file') {
+                    var url = (!creative.clickUrl || creative.clickUrl === '') ? this.defaultClickUrl : creative.clickUrl;
+
+                    if (!this.isValidUrl(url)) {
+                        this.setInvalid(creative, 'Incorrect URL set!');
+                        return;
+                    }
+                }
+
+                delete creative.state;
+                delete creative.reason;
+            },
+
+            isValidUrl: function (url) {
+                return /https?:\/\/.+/.test(url);
             },
 
             isValidSize: function (size) {
                 return _.indexOf(this.validSizes, size) !== -1;
+            },
+
+            // Used before submitting but still contains invalid creatives
+            showInvalidCreatives: function (creative) {
+                this.showingInvalid = true;
+
+                this.notifyListeners();
+            },
+
+            removeInvalidImageCreatives: function () {
+                this.creatives = _.filter(this.creatives, function (creative) {
+                    return !(creative.type === 'file' && creative.state === 'invalid');
+                });
+
+                this.notifyListeners();
             },
 
             getValidCreatives: function () {
@@ -209,8 +255,11 @@
 
             getState: function () {
                 var url = this.defaultClickUrl;
+                var self = this;
 
                 var creatives = _.map(this.creatives, function (c) {
+                    c.showErrors = self.showingInvalid;
+
                     if (c.type == 'file' && (!c.clickUrl || c.clickUrl === '')) {
                         var newc = _.clone(c);
                         newc.clickUrl = url;

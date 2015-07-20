@@ -18,7 +18,7 @@
                     </td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                    <td>{ this.props.data.state == 'invalid' ? this.props.data.reason : ''}</td>
                     <td>
                         <button className="remove btn btn-danger" title="Remove this banner" onClick={this.props.removeCreative.bind(null, this.props.data.id)}>
                             <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
@@ -70,7 +70,7 @@
                             {this.getAllowedSizes()}
                         </select>
                     </td>
-                    <td>&nbsp;</td>
+                    <td>{ this.props.data.state == 'invalid' ? this.props.data.reason : ''}</td>
                     <td>
                         <button className="remove btn btn-danger" title="Remove this banner" onClick={this.props.removeCreative.bind(null, this.props.data.id)}>
                             <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
@@ -123,7 +123,7 @@
                             {this.getAllowedSizes()}
                         </select>
                     </td>
-                    <td>&nbsp;</td>
+                    <td>{ this.props.data.showErrors && this.props.data.state == 'invalid' ? <div className="alert alert-danger"><span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {this.props.data.reason}</div> : ''}</td>
                     <td>
                         <button className="remove btn btn-danger" title="Remove this banner" onClick={this.props.removeCreative.bind(null, this.props.data.id)}>
                             <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
@@ -139,13 +139,35 @@
             this.props.updateCreative(this.props.data.id, { clickUrl: e.target.value });
         },
 
-        render: function() {
-            if (this.props.data.state === 'invalid') {
-                var creativeStyle = 'declined';
-                var urlInput = this.props.data.reason;
+        _isInvalidCreative: function () {
+            return this.props.data.state === 'invalid' && this.props.data.reason !== 'Incorrect URL set!';
+        },
+
+        _renderInput: function () {
+            if (this._isInvalidCreative()) {
+                return this.props.data.reason;
             }
-            else {
-                var urlInput = <input ref="clickUrl" className="clickurl form-control default" type="text" defaultValue="http://" value={this.props.data.clickUrl} name="clickurl" onChange={this.onChangeClickUrl}/>;
+
+            if (this.props.data.state === 'invalid' && this.props.data.showErrors === true) {
+                return (
+                    <div className="form-group has-error has-feedback">
+                        <input ref="clickUrl" type="text" className="clickurl form-control default" aria-describedby="inputError" defaultValue="http://" value={this.props.data.clickUrl} name="clickurl" onChange={this.onChangeClickUrl} />
+                        <span className="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                        <span id="inputError" className="sr-only">(error)</span>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="form-group">
+                    <input ref="clickUrl" className="clickurl form-control default" type="text" defaultValue="http://" value={this.props.data.clickUrl} name="clickurl" onChange={this.onChangeClickUrl}/>
+                </div>
+            );
+        },
+
+        render: function() {
+            if (this._isInvalidCreative()) {
+                var creativeStyle = 'declined';
             }
 
             return (
@@ -157,7 +179,7 @@
                     <td>{ this.props.data.filesize }</td>
                     <td>{ this.props.data.size }</td>
                     <td>
-                        {urlInput}
+                        {this._renderInput()}
                     </td>
                     <td>
                         <button className="remove btn btn-danger" title="Remove this banner" onClick={this.props.removeCreative.bind(null, this.props.data.id)}>

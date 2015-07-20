@@ -13,7 +13,7 @@ Get the store with `uploader.store()`. Each creative is in the following format:
 ```javascript
 {
     type: ['url', 'content', 'file', 'pop'],
-    kind: ['html','js'], // Only with content and file
+    kind: ['html','js'], // Only with content and url
     clickUrl: '',
     filename: 'myfile.png',
     filesize: '342343',
@@ -21,7 +21,9 @@ Get the store with `uploader.store()`. Each creative is in the following format:
     url: '',
 
     // Errors, set if the creative is invalid.
-    state: 'invalid'
-    reason: 'Invalid size'
+    state: 'invalid',
+    permanentlyInvalid: true, // Invalid images are always invalid, except for clickUrl
+    reason: 'Invalid size',
+    showErrors: true,  // Show errors for all creatives
 }
 ```
