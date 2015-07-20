@@ -39,8 +39,8 @@
             this.props.updateCreative(this.props.data.id, { size: e.target.value });
         },
 
-        onChangeKind: function (e) {
-            this.props.updateCreative(this.props.data.id, { kind: e.target.value.toLowerCase() });
+        onChangeType: function (e) {
+            this.props.updateCreative(this.props.data.id, { type: e.target.value.toLowerCase() });
         },
 
         getAllowedSizes: function () {
@@ -53,8 +53,8 @@
             return (
                 <tr>
                     <td>
-                        <img src={'/img/creatives/content-' + this.props.data.kind + '.png'}></img>
-                        <select style={{verticalAlign: 'top'}} name="kind" onChange={this.onChangeKind}>
+                        <img src={'/img/creatives/content-' + this.props.data.type + '.png'}></img>
+                        <select style={{verticalAlign: 'top'}} name="type" onChange={this.onChangeType}>
                             <option>HTML</option>
                             <option>Javascript</option>
                         </select>
@@ -92,8 +92,8 @@
             this.props.updateCreative(this.props.data.id, { size: e.target.value });
         },
 
-        onChangeKind: function (e) {
-            this.props.updateCreative(this.props.data.id, { kind: e.target.value });
+        onChangeType: function (e) {
+            this.props.updateCreative(this.props.data.id, { type: e.target.value });
         },
 
         getAllowedSizes: function () {
@@ -106,8 +106,8 @@
             return (
                 <tr>
                     <td>
-                        <img src={'/img/creatives/url-' + this.props.data.kind.toLowerCase() + '.png'}></img>
-                        <select style={{verticalAlign: 'top'}} name="kind" onChange={this.onChangeKind}>
+                        <img src={'/img/creatives/url-' + this.props.data.type.toLowerCase() + '.png'}></img>
+                        <select style={{verticalAlign: 'top'}} name="type" onChange={this.onChangeType}>
                             <option value="html">iFrame</option>
                             <option>Javascript</option>
                         </select>
@@ -203,14 +203,14 @@
             allowedSizes = this.props.allowedSizes;
 
             var creatives = this.props.creatives.map(function (creative) {
-                switch (creative.type) {
+                switch (creative.content_type) {
                     case 'file':
                         return <ImageCreative key={creative.id} data={creative} removeCreative={removeCreative} updateCreative={updateCreative}/>;
                     case 'url':
                         return <UrlCreative key={creative.id} data={creative} removeCreative={removeCreative} updateCreative={updateCreative} allowedSizes={allowedSizes} />;
                     case 'content':
                         return <ContentCreative key={creative.id} data={creative} removeCreative={removeCreative} updateCreative={updateCreative} allowedSizes={allowedSizes} />;
-                    case 'pop':
+                    case 'popup':
                         return <PopCreative key={creative.id} data={creative} removeCreative={removeCreative} updateCreative={updateCreative} />;
                     default:
                         return <tr><td>Unknown Creative Type</td></tr>;
@@ -247,21 +247,21 @@
     var UploadButtons = React.createClass({
         onUrlCreative: function (e) {
             this.props.addCreative({
-                type: 'url',
-                kind: 'html'
+                content_type: 'url',
+                type: 'html'
             });
         },
 
         onContentCreative: function (e) {
             this.props.addCreative({
-                type: 'content',
-                kind: 'html'
+                content_type: 'content',
+                type: 'html'
             });
         },
 
         onPopCreative: function (e) {
             this.props.addCreative({
-                type: 'pop',
+                content_type: 'popup',
                 size: '800x600'
             });
 
@@ -293,7 +293,7 @@
                     </a>
                 : false}
 
-                { this.shouldShowButtonFor('pop') ?
+                { this.shouldShowButtonFor('popup') ?
                     <a className="btn btn-primary btn-sm" href="javascript:void(0);" onClick={this.onPopCreative}>
                         <span className="glyphicon glyphicon-plus" aria-hidden="true"></span> Add a popup/popunder URL
                     </a>

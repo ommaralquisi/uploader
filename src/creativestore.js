@@ -56,7 +56,7 @@
 
                 if (file.size > 120 * 1024) {
                     this.add({
-                        type: 'file',
+                        content_type: 'file',
                         clickUrl: '',
                         filename: file.name,
                         filesize: file.size,
@@ -71,7 +71,7 @@
                     image.src    = upload.target.result;
                     image.onload = function () {
                         self.add({
-                            type: 'file',
+                            content_type: 'file',
                             clickUrl: '',
                             filename: file.name,
                             filesize: file.size,
@@ -120,7 +120,7 @@
 
                             if (file.state === 'invalid') {
                                 errFile = {
-                                    type: 'file',
+                                    content_type: 'file',
                                     clickUrl: '',
                                     filename: file.name,
                                     filesize: file.filesize,
@@ -133,7 +133,7 @@
                             }
                             else {
                                 self.add({
-                                    type: 'file',
+                                    content_type: 'file',
                                     clickUrl: '',
                                     filename: file.name,
                                     filesize: file.filesize,
@@ -156,7 +156,7 @@
 
                 this.validate(creative);
 
-                if (creative.type == 'file') {
+                if (creative.content_type == 'file') {
                     if (!this.isValidSize(creative.size)) {
                         creative.permanentlyInvalid = true;
                     }
@@ -199,17 +199,17 @@
             },
 
             validate: function (creative) {
-                if (creative.type !== 'pop' && !this.isValidSize(creative.size)) {
+                if (creative.content_type !== 'popup' && !this.isValidSize(creative.size)) {
                     this.setInvalid(creative, 'Incorrect creative dimensions!');
                     return;
                 }
 
-                if (creative.type !== 'file' && !this.isValidUrl(creative.url)) {
+                if (creative.content_type !== 'file' && !this.isValidUrl(creative.url)) {
                     this.setInvalid(creative, 'Incorrect URL set!');
                     return;
                 }
 
-                if (creative.type == 'file') {
+                if (creative.content_type == 'file') {
                     var url = (!creative.clickUrl || creative.clickUrl === '') ? this.defaultClickUrl : creative.clickUrl;
 
                     if (!this.isValidUrl(url)) {
@@ -267,7 +267,7 @@
                 var creatives = _.map(this.creatives, function (c) {
                     c.showErrors = self.showingInvalid;
 
-                    if (c.type == 'file' && (!c.clickUrl || c.clickUrl === '')) {
+                    if (c.content_type == 'file' && (!c.clickUrl || c.clickUrl === '')) {
                         var newc = _.clone(c);
                         newc.clickUrl = url;
 
