@@ -18,7 +18,7 @@
                     </td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
-                    <td>{ this.props.data.state == 'invalid' ? this.props.data.reason : ''}</td>
+                    <td>{ this.props.data.showErrors && this.props.data.state == 'invalid' ? this.props.data.reason : ''}</td>
                     <td>
                         <button className="remove btn btn-danger" title="Remove this banner" onClick={this.props.removeCreative.bind(null, this.props.data.id)}>
                             <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
@@ -70,7 +70,7 @@
                             {this.getAllowedSizes()}
                         </select>
                     </td>
-                    <td>{ this.props.data.state == 'invalid' ? this.props.data.reason : ''}</td>
+                    <td>{ this.props.data.showErrors && this.props.data.state == 'invalid' ? this.props.data.reason : ''}</td>
                     <td>
                         <button className="remove btn btn-danger" title="Remove this banner" onClick={this.props.removeCreative.bind(null, this.props.data.id)}>
                             <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>

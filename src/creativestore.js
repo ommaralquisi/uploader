@@ -56,6 +56,7 @@
 
                 if (file.size > 120 * 1024) {
                     this.add({
+                        type: 'image',
                         content_type: 'file',
                         clickUrl: '',
                         filename: file.name,
@@ -71,6 +72,7 @@
                     image.src    = upload.target.result;
                     image.onload = function () {
                         self.add({
+                            type: 'image',
                             content_type: 'file',
                             clickUrl: '',
                             filename: file.name,
@@ -120,6 +122,7 @@
 
                             if (file.state === 'invalid') {
                                 errFile = {
+                                    type: 'image',
                                     content_type: 'file',
                                     clickUrl: '',
                                     filename: file.name,
