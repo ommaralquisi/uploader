@@ -230,6 +230,13 @@
                 return _.indexOf(this.validSizes, size) !== -1;
             },
 
+            hasOnlyValidCreatives: function () {
+                // permanentlyInvalid are ignored
+                return _.every(this.creatives, function (creative) {
+                    return (creative.permanentlyInvalid || creative.state !== 'invalid');
+                });
+            },
+
             // Used before submitting but still contains invalid creatives
             showInvalidCreatives: function (creative) {
                 this.showingInvalid = true;
@@ -239,7 +246,7 @@
 
             removeInvalidImageCreatives: function () {
                 this.creatives = _.filter(this.creatives, function (creative) {
-                    return !(creative.type === 'file' && creative.state === 'invalid');
+                    return !creative.permanentlyInvalid;
                 });
 
                 this.notifyListeners();
@@ -291,8 +298,25 @@
 
             getPlaceholder: function () {
                 return '/img/creatives/placeholder.png';
-            }
+            },
 
+            uploadCreatives: function () {
+                this.removeInvalidImageCreatives();
+
+                if (!this.hasOnlyValidCreatives()) {
+                    this.showInvalidCreatives();
+                } else {
+                    // Transform the creatives for our API
+                    $.ajax({
+                        type: 'POST',
+                        data: this.creatives,
+                        success: uploadSuccess,
+                        failed: function () {
+                            alert('Error: We could not upload the creatives! Please contact support.');
+                        }
+                    })
+                }
+            }
         };
     };
 })();

@@ -140,7 +140,7 @@
         },
 
         _isInvalidCreative: function () {
-            return this.props.data.state === 'invalid' && this.props.data.reason !== 'Incorrect URL set!';
+            return this.props.data.permanentlyInvalid;
         },
 
         _renderInput: function () {
