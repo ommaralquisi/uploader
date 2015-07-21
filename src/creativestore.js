@@ -6,6 +6,10 @@
             defaultClickUrl: 'http://',
             key: 0,
             showingInvalid: false,
+            endpoint: '',
+            success: function () {
+                console.log('success!!');
+            },
 
             addChangeListener: function (listener) {
                 this.listeners.push(listener);
@@ -17,6 +21,10 @@
 
             setValidSizes: function (sizes) {
                 this.validSizes = sizes;
+            },
+
+            setCreativesEndpoint: function (url) {
+                this.endpoint = url;
             },
 
             setDefaultClickUrl: function (url) {
@@ -78,7 +86,7 @@
                             filename: file.name,
                             filesize: file.size,
                             size: this.width + 'x' + this.height,
-                            url: upload.target.result
+                            url: upload.target.result,
                         });
                     };
                 }.bind(this);
@@ -87,6 +95,7 @@
             },
 
             uploadUsingIframe: function(fileInput) {
+
                 var random = _.random(10000000, 999999999);
                 var self = this;
 
@@ -207,16 +216,23 @@
                     return;
                 }
 
-                if (creative.content_type !== 'file' && !this.isValidUrl(creative.url)) {
+                if ((creative.content_type !== 'file' && creative.content_type !== 'content') && !this.isValidUrl(creative.url)) {
                     this.setInvalid(creative, 'Incorrect URL set!');
                     return;
                 }
 
-                if (creative.content_type == 'file') {
+                if (creative.content_type === 'file') {
                     var url = (!creative.clickUrl || creative.clickUrl === '') ? this.defaultClickUrl : creative.clickUrl;
 
                     if (!this.isValidUrl(url)) {
                         this.setInvalid(creative, 'Incorrect URL set!');
+                        return;
+                    }
+                }
+
+                if (creative.content_type === 'content') {
+                    if (!creative.content || creative.content === '') {
+                        this.setInvalid(creative, 'The content of the creative is empty');
                         return;
                     }
                 }
@@ -305,19 +321,37 @@
 
             uploadCreatives: function () {
                 this.removeInvalidImageCreatives();
+                var self = this;
 
                 if (!this.hasOnlyValidCreatives()) {
                     this.showInvalidCreatives();
                 } else {
                     // Transform the creatives for our API
+                    var creatives = _.map(this.getState().creatives, function (creative) {
+                        if (creative.content_type === 'file') {
+                            creative.base64 = creative.url.substr(creative.url.indexOf(',')+1);
+                            creative.url = creative.clickUrl && creative.clickUrl !== '' ? creative.clickUrl : self.defaultClickUrl;
+
+                            delete creative.clickUrl;
+                        }
+
+                        delete creative.filesize;
+                        delete creative.showErrors;
+
+                        return creative;
+                    });
+
+                    console.log(creatives);
+
                     $.ajax({
                         type: 'POST',
-                        data: this.creatives,
-                        success: uploadSuccess,
-                        failed: function () {
-                            alert('Error: We could not upload the creatives! Please contact support.');
+                        url: this.endpoint,
+                        data: {creatives: creatives},
+                        success: this.success,
+                        failed: function (e) {
+                            alert('Error: We could not upload the creatives! Please contact support.' + e.message);
                         }
-                    })
+                    });
                 }
             }
         };

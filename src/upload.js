@@ -356,6 +356,7 @@
 
     window.CreativeUploader =  function (options) {
         creativeStore.setValidSizes(options.sizes);
+        creativeStore.setCreativesEndpoint(options.url);
 
         var control = React.render(
             <CreativeControl allowedSizes={options.sizes} allowedTypes={options.types}/>,
