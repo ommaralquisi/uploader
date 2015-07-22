@@ -1,5 +1,4 @@
 (function () {
-    // Either an iframe or javascript creative
     var creativeStore = window.createCreativeStore();
 
     var PopCreative = React.createClass({
@@ -18,7 +17,7 @@
                     </td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
-                    <td>{ this.props.data.showErrors && this.props.data.state == 'invalid' ? this.props.data.reason : ''}</td>
+                    <td>{ this.props.data.showErrors && this.props.data.state == 'invalid' ? <div className="alert alert-danger"><span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {this.props.data.reason}</div> : ''}</td>
                     <td>
                         <button className="remove btn btn-danger" title="Remove this banner" onClick={this.props.removeCreative.bind(null, this.props.data.id)}>
                             <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
@@ -70,7 +69,7 @@
                             {this.getAllowedSizes()}
                         </select>
                     </td>
-                    <td>{ this.props.data.showErrors && this.props.data.state == 'invalid' ? this.props.data.reason : ''}</td>
+                    <td>{ this.props.data.showErrors && this.props.data.state == 'invalid' ? <div className="alert alert-danger"><span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {this.props.data.reason}</div> : ''}</td>
                     <td>
                         <button className="remove btn btn-danger" title="Remove this banner" onClick={this.props.removeCreative.bind(null, this.props.data.id)}>
                             <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
@@ -82,7 +81,6 @@
     });
 
 
-    // Either an iframe or javascript creative
     var UrlCreative = React.createClass({
         onChangeUrl: function (e) {
             this.props.updateCreative(this.props.data.id, { url: e.target.value });
@@ -217,12 +215,14 @@
                 }
             });
             return (
-                <table id="creatives" className="table nosort" cellSpacing="0">
-                <thead><tr><th>Preview</th><th>Filename / URL</th><th>Filesize</th><th>Dimensions</th><th>Click URL</th><th>Remove</th></tr></thead>
-                <tbody>
-                {creatives}
-                </tbody>
-                </table>
+                <div className="well">
+                    <table id="creatives" className="table nosort" cellSpacing="0">
+                    <thead><tr><th>Preview</th><th>Filename / URL</th><th>Filesize</th><th>Dimensions</th><th>Click URL</th><th>Remove</th></tr></thead>
+                    <tbody>
+                    {creatives}
+                    </tbody>
+                    </table>
+                </div>
             );
         }
     });
@@ -262,6 +262,7 @@
         onPopCreative: function (e) {
             this.props.addCreative({
                 content_type: 'popup',
+                type: 'html',
                 size: '800x600'
             });
 

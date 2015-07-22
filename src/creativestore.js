@@ -7,9 +7,6 @@
             key: 0,
             showingInvalid: false,
             endpoint: '',
-            success: function () {
-                console.log('success!!');
-            },
 
             addChangeListener: function (listener) {
                 this.listeners.push(listener);
@@ -242,7 +239,7 @@
             },
 
             isValidUrl: function (url) {
-                return /https?:\/\/.+/.test(url);
+                return /^https?:\/\/.+/.test(url);
             },
 
             isValidSize: function (size) {
@@ -319,6 +316,65 @@
                 return '/img/creatives/placeholder.png';
             },
 
+            transformForApi: function (ocreative) {
+                creative = _.clone(ocreative);
+
+                if (creative.content_type === 'file') {
+                    creative.base64 = creative.url.substr(creative.url.indexOf(',')+1);
+                    creative.url = creative.clickUrl && creative.clickUrl !== '' ? creative.clickUrl : self.defaultClickUrl;
+
+                    delete creative.clickUrl;
+                }
+
+                var sizes = creative.size.split('x');
+                creative.width = sizes[0];
+                creative.height = sizes[1];
+
+                delete creative.size;
+                delete creative.filesize;
+                delete creative.showErrors;
+
+                return creative;
+            },
+
+            postToBackend: function (creatives) {
+                var self = this;
+
+                $.ajax({
+                    type: 'POST',
+                    url: this.endpoint,
+                    data: {creatives: creatives},
+                    success: function (data) {
+                        self.successResponse(data);
+                    },
+                    failed: function (e) {
+                        alert('Error: We could not upload the creatives! Please contact support.' + e.message);
+                    }
+                });
+            },
+
+            successResponse: function (data) {
+                console.log('successResponse');
+                for (var i = 0, j = 0; i < data.length; i++, j++) {
+                    if (data[i].status === 'success') {
+                        this.creatives.splice(j, 1);
+                        --j;
+                    }
+                    else {
+                        this.showErrors = true;
+
+                        var errors = _.flatten(_.values(data[i].errors));
+                        this.setInvalid(this.creatives[j], errors[0]);
+
+                        if (this.creatives[j].content_type === 'file') {
+                            this.creatives[j].permanentlyInvalid = true;
+                        }
+                    }
+                }
+
+                this.notifyListeners();
+            },
+
             uploadCreatives: function () {
                 this.removeInvalidImageCreatives();
                 var self = this;
@@ -326,32 +382,13 @@
                 if (!this.hasOnlyValidCreatives()) {
                     this.showInvalidCreatives();
                 } else {
-                    // Transform the creatives for our API
                     var creatives = _.map(this.getState().creatives, function (creative) {
-                        if (creative.content_type === 'file') {
-                            creative.base64 = creative.url.substr(creative.url.indexOf(',')+1);
-                            creative.url = creative.clickUrl && creative.clickUrl !== '' ? creative.clickUrl : self.defaultClickUrl;
-
-                            delete creative.clickUrl;
-                        }
-
-                        delete creative.filesize;
-                        delete creative.showErrors;
-
-                        return creative;
+                        return self.transformForApi(creative);
                     });
 
-                    console.log(creatives);
-
-                    $.ajax({
-                        type: 'POST',
-                        url: this.endpoint,
-                        data: {creatives: creatives},
-                        success: this.success,
-                        failed: function (e) {
-                            alert('Error: We could not upload the creatives! Please contact support.' + e.message);
-                        }
-                    });
+                    if (creatives.length > 0) {
+                        this.postToBackend(creatives);
+                    }
                 }
             }
         };
