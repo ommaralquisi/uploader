@@ -359,6 +359,10 @@
         creativeStore.setValidSizes(options.sizes);
         creativeStore.setCreativesEndpoint(options.url);
 
+        if (options.onNewCreatives) {
+            creativeStore.addNewCreativesListener(options.onNewCreatives);
+        }
+
         var control = React.render(
             <CreativeControl allowedSizes={options.sizes} allowedTypes={options.types}/>,
             document.getElementById(options.target)

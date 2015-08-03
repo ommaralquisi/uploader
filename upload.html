@@ -19,7 +19,10 @@
             url: '/upload.php',
             types: ['file', 'url', 'content', 'popup'],
             sizes: ['120x600', '160x600', '300x250', '468x60', '728x90'],
-            target: 'content'
+            target: 'content',
+            onNewCreatives: function (creatives) {
+                console.log(creatives);
+            }
         });
     </script>
 </body>

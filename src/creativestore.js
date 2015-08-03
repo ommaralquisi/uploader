@@ -16,6 +16,14 @@
                 _.each(this.listeners, function (listener) { listener(); });
             },
 
+            addNewCreativesListener: function (listener) {
+                this.newCreativeListeners.push(listener);
+            },
+
+            notifyNewCreatives: function (creatives) {
+                _.each(this.newCreativeListeners, function (listener) { listener(creatives); });
+            },
+
             setValidSizes: function (sizes) {
                 this.validSizes = sizes;
             },
@@ -354,9 +362,11 @@
             },
 
             successResponse: function (data) {
-                console.log('successResponse');
+                var newCreatives = [];
+
                 for (var i = 0, j = 0; i < data.length; i++, j++) {
                     if (data[i].status === 'success') {
+                        newCreatives.push(data[i]);
                         this.creatives.splice(j, 1);
                         --j;
                     }
@@ -373,6 +383,7 @@
                 }
 
                 this.notifyListeners();
+                this.notifyNewCreatives(newCreatives);
             },
 
             uploadCreatives: function () {
