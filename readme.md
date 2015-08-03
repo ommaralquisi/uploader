@@ -4,7 +4,10 @@ Create a new creative uploader as such:
 var uploader = CreativeUploader({
     types: ['file', 'url', 'content', 'pop'],
     sizes: ['120x600', '160x600', '300x250', '468x60', '728x90'],
-    target: 'content'
+    target: 'content',
+    onNewCreatives: function (creatives) {
+        console.log(creatives);
+    }
 });
 ```
 
@@ -12,8 +15,8 @@ Get the store with `uploader.store()`. Each creative is in the following format:
 
 ```javascript
 {
-    type: ['url', 'content', 'file', 'pop'],
-    kind: ['html','js'], // Only with content and url
+    content_type: ['url', 'content', 'file', 'pop'],
+    type: ['html','js'], // Only with content and url
     clickUrl: '',
     filename: 'myfile.png',
     filesize: '342343',
