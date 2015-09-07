@@ -40,9 +40,8 @@ margin-top: 25%;
 #da-archives {
 display: inline-block;
 height: 28px;
-background-image: url(/img/creatives/s-upload.png);
-background-repeat: no-repeat;
-vertical-align: -7px;
+    background: url(../img/creatives/s-upload.png) no-repeat;
+    vertical-align: -7px;
 }
 
 #da-images {
@@ -147,8 +146,7 @@ position: relative; /* Because it can contain a progress bar that must be vertic
 display: inline-block; /* Not block because it should be centered */
 width: 140px;
 height: 100px;
-background-image: url(/img/creatives/s-upload.png);
-background-repeat: no-repeat;
+    background: url(../img/creatives/s-upload.png) no-repeat;
 }
 
 #creatives .placeholder.flash {
@@ -255,7 +253,7 @@ animation: progress 3s linear infinite;
 }
 
 #creatives .filename {
-word-wrap: break-word; /* Doesn't help in Chrome, but maybe in IE? Supported by older browsers */
+/*word-wrap: break-word; /!* Doesn't help in Chrome, but maybe in IE? Supported by older browsers *!/*/
 word-break: break-word;
 }
 
@@ -291,7 +289,7 @@ padding: 8px 8px 2px;
   #da-flash,
   #da-archives,
   #creatives .placeholder {
-  background-image: url(/img/creatives/s-upload.png); /* TODO: add retina */
+  background-image: url(../img/creatives/s-upload.png); /* TODO: add retina */
   -webkit-background-size: 140px 528px;
   -moz-background-size: 140px 528px;
   -o-background-size: 140px 528px;
