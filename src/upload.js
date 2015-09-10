@@ -52,11 +52,7 @@
             return (
                 React.createElement("tr", null, 
                     React.createElement("td", null, 
-                        React.createElement("img", {src: '../img/creatives/content-' + this.props.data.type + '.png'}), 
-                        React.createElement("select", {style: {verticalAlign: 'top'}, name: "type", onChange: this.onChangeType}, 
-                            React.createElement("option", null, "HTML"), 
-                            React.createElement("option", null, "Javascript")
-                        )
+                        React.createElement("img", {src: '../img/creatives/content-html.png'}),
                     ), 
                     React.createElement("td", null, 
                         React.createElement("textarea", {className: "form-control", rows: "7", cols: "40", onChange: this.onChangeContent}), 
@@ -290,7 +286,7 @@
 
                  this.shouldShowButtonFor('content') ?
                     React.createElement("a", {className: "btn btn-primary btn-sm", href: "javascript:void(0);", onClick: this.onContentCreative}, 
-                        React.createElement("span", {className: "glyphicon glyphicon-plus", "aria-hidden": "true"}), " Add a JS or HTML script"
+                        React.createElement("span", {className: "glyphicon glyphicon-plus", "aria-hidden": "true"}), "  Add a HTML tag"
                     )
                 : false, 
 
