@@ -278,15 +278,15 @@
                     )
                 : false, 
 
-                 this.shouldShowButtonFor('url') ?
-                    React.createElement("a", {className: "btn btn-primary btn-sm", href: "javascript:void(0);", onClick: this.onUrlCreative}, 
-                        React.createElement("span", {className: "glyphicon glyphicon-plus", "aria-hidden": "true"}), " Add a JS or iframe URL"
+                this.shouldShowButtonFor('content') ?
+                    React.createElement("a", {className: "btn btn-primary btn-sm", href: "javascript:void(0);", onClick: this.onContentCreative}, 
+                        React.createElement("span", {className: "glyphicon glyphicon-plus", "aria-hidden": "true"}), "  Add a HTML tag"
                     )
                 : false, 
 
-                 this.shouldShowButtonFor('content') ?
-                    React.createElement("a", {className: "btn btn-primary btn-sm", href: "javascript:void(0);", onClick: this.onContentCreative}, 
-                        React.createElement("span", {className: "glyphicon glyphicon-plus", "aria-hidden": "true"}), "  Add a HTML tag"
+                this.shouldShowButtonFor('url') ?
+                    React.createElement("a", {className: "btn btn-primary btn-sm", href: "javascript:void(0);", onClick: this.onUrlCreative}, 
+                        React.createElement("span", {className: "glyphicon glyphicon-plus", "aria-hidden": "true"}), " Add a JS or iframe URL"
                     )
                 : false, 
 
